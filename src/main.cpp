@@ -18,6 +18,7 @@ uint8_t item11_increment = 1;
 uint8_t item11_min = 0;
 uint8_t item11_max = 5;
 
+float item12 = 0.0f;
 
 void item10(){
     canvas.clear();
@@ -29,29 +30,96 @@ void item10(){
 
 
 M5Config::ConfigItem configs2[] = {
-    {"0-10",  config.TYPE_UINT8_T,  &item8, 1,0,1},
-    {"0-100, +10", config.TYPE_UINT8_T, &item9, 10,0,100},
-    {"function",   config.TYPE_FUNCTION, item10},
-    {"declaration 2",  config.TYPE_UINT8_T,  &item11, item11_increment, item11_min, item11_max}
+    {
+        .name = "0-10", 
+        .type = config.TYPE_UINT8_T, 
+        .pointer = {.data = &item8}, 
+        .increment = {.u8 = 1}, .lower_limit = {.u8 = 0}, .upper_limit = {.u8 = 10}
+    },
+    {
+        .name = "0-100, +10", 
+        .type = config.TYPE_UINT8_T, 
+        .pointer = {.data = &item9}, 
+        .increment = {.u8 = 10}, .lower_limit = {.u8 = 0}, .upper_limit = {.u8 = 100}
+    },
+    {
+        .name = "function",   
+        .type = config.TYPE_FUNCTION, 
+        .pointer = {.function = item10} // Sets the function pointer slot
+    },
+    {
+        .name = "declaration 2", 
+        .type = config.TYPE_UINT8_T, 
+        .pointer = {.data = &item11}, 
+        .increment = {.u8 = item11_increment}, .lower_limit = {.u8 = item11_min}, .upper_limit = {.u8 = item11_max}
+    }
 };
-M5Config::ConfigMenu menu2 = {configs2, sizeof(configs2) / sizeof(configs2[0])};
+
+M5Config::ConfigMenu menu2 = {
+    .config_items = configs2, 
+    .size = sizeof(configs2) / sizeof(configs2[0])
+};
 
 M5Config::ConfigItem configs[] = {
-    {"uint8_t",  config.TYPE_UINT8_T,  &item1, 1, 0, 255},
-    {"uint16_t", config.TYPE_UINT16_T, &item2, 1, 0, 65535},
-    {"uint32_t", config.TYPE_UINT32_T, &item3, 1, 0, 4294967295},
-
-    {"int8_t",   config.TYPE_INT8_T,   &item4, 1, -128, 127},
-    {"int16_t",  config.TYPE_INT16_T,  &item5, 1, -32768, 32767},
-    {"int32_t",  config.TYPE_INT32_T,  &item6, 1, -2147483648, 2147483647},
-    {"float",  config.TYPE_FLOAT,  &item6, 0.1f, -0.1f, 1.5f},
-
-    {"bool",config.TYPE_BOOL,&item7,1,0,1},
-    {"sub menu",config.TYPE_SUBMENU,&menu2}
+    {
+        .name = "uint8_t",  
+        .type = config.TYPE_UINT8_T,  
+        .pointer = {.data = &item1}, 
+        .increment = {.u8 = 1}, .lower_limit = {.u8 = 0}, .upper_limit = {.u8 = 255}
+    },
+    {
+        .name = "uint16_t", 
+        .type = config.TYPE_UINT16_T, 
+        .pointer = {.data = &item2}, 
+        .increment = {.u16 = 1}, .lower_limit = {.u16 = 0}, .upper_limit = {.u16 = 65535}
+    },
+    {
+        .name = "uint32_t", 
+        .type = config.TYPE_UINT32_T, 
+        .pointer = {.data = &item3}, 
+        .increment = {.u32 = 1}, .lower_limit = {.u32 = 0}, .upper_limit = {.u32 = 4294967295}
+    },
+    {
+        .name = "int8_t",   
+        .type = config.TYPE_INT8_T,   
+        .pointer = {.data = &item4}, 
+        .increment = {.i8 = 1}, .lower_limit = {.i8 = -128}, .upper_limit = {.i8 = 127}
+    },
+    {
+        .name = "int16_t",  
+        .type = config.TYPE_INT16_T,  
+        .pointer = {.data = &item5}, 
+        .increment = {.i16 = 1}, .lower_limit = {.i16 = -32768}, .upper_limit = {.i16 = 32767}
+    },
+    {
+        .name = "int32_t",  
+        .type = config.TYPE_INT32_T,  
+        .pointer = {.data = &item6}, 
+        .increment = {.i32 = 1}, .lower_limit = {.i32 = -2147483648}, .upper_limit = {.i32 = 2147483647}
+    },
+    {
+        .name = "float",    
+        .type = config.TYPE_FLOAT,    
+        .pointer = {.data = &item12}, 
+        .increment = {.f = 0.1f}, .lower_limit = {.f = -0.1f}, .upper_limit = {.f = 1.5f}
+    },
+    {
+        .name = "bool",     
+        .type = config.TYPE_BOOL,     
+        .pointer = {.data = &item7}, 
+        .increment = {.u8 = 1}, .lower_limit = {.u8 = 0}, .upper_limit = {.u8 = 1}
+    },
+    {
+        .name = "sub menu", 
+        .type = config.TYPE_SUBMENU,  
+        .pointer = {.data = &menu2}
+    }
 };
 
-M5Config::ConfigMenu menu = {configs, sizeof(configs) / sizeof(configs[0])};
-
+M5Config::ConfigMenu menu = {
+    .config_items = configs, 
+    .size = sizeof(configs) / sizeof(configs[0])
+};
 
 void OnUsage(M5Config::ConfigItem*){
     return;

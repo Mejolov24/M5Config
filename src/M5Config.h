@@ -31,7 +31,6 @@ class M5Config{
         TYPE_INT32_T,
         TYPE_FLOAT,
         TYPE_BOOL,
-        TYPE_ENUM,
         TYPE_SUBMENU,
         TYPE_FUNCTION
     };
@@ -47,7 +46,7 @@ class M5Config{
     };
 
     union Pointer {
-        void* value_ptr;
+        void* data;
         void (*function)();
     };
 

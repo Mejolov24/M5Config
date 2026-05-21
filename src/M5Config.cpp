@@ -23,25 +23,23 @@ void M5Config::goToMenu(ConfigMenu* menu, bool append){
 }
 
 String M5Config::_formatValue(ConfigItem* item){
-    if(item->value_ptr == nullptr )
+    if(item->pointer.data == nullptr )
     {return "";}
     
     switch (item->type){
         case ConfigType::TYPE_SUBMENU:
         case ConfigType::TYPE_FUNCTION:
         return "";
-        case ConfigType::TYPE_BOOL:{return String((*static_cast<bool*>(item->value_ptr)) ? "On" : "Off");}
-        case ConfigType::TYPE_ENUM:{return String(*static_cast<int*>(item->value_ptr));}
-
-        case ConfigType::TYPE_UINT8_T:{return String(*static_cast<uint8_t*>(item->value_ptr));}
-        case ConfigType::TYPE_UINT16_T:{return String(*static_cast<uint16_t*>(item->value_ptr));}
-        case ConfigType::TYPE_UINT32_T:{return String(*static_cast<uint32_t*>(item->value_ptr));}
-        case ConfigType::TYPE_INT8_T:{return String(*static_cast<int8_t*>(item->value_ptr));}
-        case ConfigType::TYPE_INT16_T:{return String(*static_cast<int16_t*>(item->value_ptr));}
-        case ConfigType::TYPE_INT32_T:{return String(*static_cast<int32_t*>(item->value_ptr));}
+        case ConfigType::TYPE_BOOL:{return String((*static_cast<bool*>(item->pointer.data)) ? "On" : "Off");}
+        case ConfigType::TYPE_UINT8_T:{return String(*static_cast<uint8_t*>(item->pointer.data));}
+        case ConfigType::TYPE_UINT16_T:{return String(*static_cast<uint16_t*>(item->pointer.data));}
+        case ConfigType::TYPE_UINT32_T:{return String(*static_cast<uint32_t*>(item->pointer.data));}
+        case ConfigType::TYPE_INT8_T:{return String(*static_cast<int8_t*>(item->pointer.data));}
+        case ConfigType::TYPE_INT16_T:{return String(*static_cast<int16_t*>(item->pointer.data));}
+        case ConfigType::TYPE_INT32_T:{return String(*static_cast<int32_t*>(item->pointer.data));}
         case ConfigType::TYPE_FLOAT:{
             char buf[16];
-            float val = *static_cast<float*>(item->value_ptr);
+            float val = *static_cast<float*>(item->pointer.data);
             snprintf(buf, sizeof(buf), "%g", val);
             return buf;
         }
@@ -50,94 +48,95 @@ String M5Config::_formatValue(ConfigItem* item){
 }
 
 void M5Config::_incrementValue(ConfigItem* item, int8_t delta){
-    if(item->value_ptr == nullptr) return;
+    if(item->pointer.data == nullptr) return;
     
     switch (item->type){
         case ConfigType::TYPE_SUBMENU:
         case ConfigType::TYPE_FUNCTION:
         return;
         case ConfigType::TYPE_BOOL:{
-            bool* value = static_cast<bool*>(item->value_ptr);
+            bool* value = static_cast<bool*>(item->pointer.data);
             *value = !(*value);
             return;
         }
-        case ConfigType::TYPE_ENUM:{
-            int* value = static_cast<int*>(item->value_ptr);
-            int increment = (int)((uint)(uintptr_t)item->increment) * delta;
-            int min = (int)(uintptr_t)item->lower_limit;
-            int max = (int)(uintptr_t)item->upper_limit;
-            int range = (max - min) + 1;
-            int temp = *value + increment;
-            temp = min + (((temp - min) % range) + range) % range;
-            *value = (int)temp;
-            return;}
 
         case ConfigType::TYPE_UINT8_T:{
-            uint8_t* value = static_cast<uint8_t*>(item->value_ptr);
-            int increment = (int)((uint8_t)(uintptr_t)item->increment) * delta;
-            int min = (uint8_t)(uintptr_t)item->lower_limit;
-            int max = (uint8_t)(uintptr_t)item->upper_limit;
-            int range = (max - min) + 1;
-            int temp = *value + increment;
+            uint8_t* value = static_cast<uint8_t*>(item->pointer.data);
+            int16_t increment = item->increment.u8 * delta;
+            uint8_t min = item->lower_limit.u8;
+            uint8_t max = item->upper_limit.u8;
+            int16_t range = (max - min) + 1;
+            int16_t temp = *value + increment;
             temp = min + (((temp - min) % range) + range) % range;
             *value = (uint8_t)temp;
             return;}
 
-
         case ConfigType::TYPE_UINT16_T:{
-            uint16_t* value = static_cast<uint16_t*>(item->value_ptr);
-            int increment = (int)((uint16_t)(uintptr_t)item->increment) * delta;
-            int min = (uint16_t)(uintptr_t)item->lower_limit;
-            int max = (uint16_t)(uintptr_t)item->upper_limit;
-            int range = (max - min) + 1;
-            int temp = *value + increment;
+            uint16_t* value = static_cast<uint16_t*>(item->pointer.data);
+            int32_t increment = item->increment.u16 * delta;
+            uint16_t min = item->lower_limit.u16;
+            uint16_t max = item->upper_limit.u16;
+            int32_t range = (max - min) + 1;
+            int32_t temp = *value + increment;
             temp = min + (((temp - min) % range) + range) % range;
             *value = (uint16_t)temp;
             return;}
         case ConfigType::TYPE_UINT32_T:{
-            uint32_t* value = static_cast<uint32_t*>(item->value_ptr);
-            int64_t increment = (int64_t)((uint32_t)(uintptr_t)item->increment) * delta;
-            int64_t min = (uint32_t)(uintptr_t)item->lower_limit;
-            int64_t max = (uint32_t)(uintptr_t)item->upper_limit;
-            int64_t range = (max - min) + 1;
+            uint32_t* value = static_cast<uint32_t*>(item->pointer.data);
+            int64_t increment = item->increment.u32 * delta;
+            uint32_t min = item->lower_limit.u32;
+            uint32_t max = item->upper_limit.u32;
+            int64_t range = ((int64_t)max - min) + 1;
             int64_t temp = *value + increment;
             temp = min + (((temp - min) % range) + range) % range;
             *value = (uint32_t)temp;
             return;}
 
-        case ConfigType::TYPE_INT8_T:
-            {
-            int8_t* value = static_cast<int8_t*>(item->value_ptr);
-            int increment = (int)((int8_t)(uintptr_t)item->increment) * delta;
-            int min = (int8_t)(uintptr_t)item->lower_limit;
-            int max = (int8_t)(uintptr_t)item->upper_limit;
-            int range = (max - min) + 1;
-            int temp = *value + increment;
+        case ConfigType::TYPE_INT8_T:{
+            int8_t* value = static_cast<int8_t*>(item->pointer.data);
+            int16_t increment = item->increment.i8 * delta;
+            int8_t min = item->lower_limit.i8;
+            int8_t max = item->upper_limit.i8;
+            int16_t range = (max - min) + 1;
+            int16_t temp = *value + increment;
             temp = min + (((temp - min) % range) + range) % range;
             *value = (int8_t)temp;
             return;}
 
         case ConfigType::TYPE_INT16_T:{
-            int16_t* value = static_cast<int16_t*>(item->value_ptr);
-            int increment = (int)((int16_t)(uintptr_t)item->increment) * delta;
-            int min = (int16_t)(uintptr_t)item->lower_limit;
-            int max = (int16_t)(uintptr_t)item->upper_limit;
-            int range = (max - min) + 1;
-            int temp = *value + increment;
+            int16_t* value = static_cast<int16_t*>(item->pointer.data);
+            int32_t increment = item->increment.i16 * delta;
+            int16_t min = item->lower_limit.i16;
+            int16_t max = item->upper_limit.i16;
+            int32_t range = (max - min) + 1;
+            int32_t temp = *value + increment;
             temp = min + (((temp - min) % range) + range) % range;
             *value = (int16_t)temp;
             return;}
 
         case ConfigType::TYPE_INT32_T:{
-            int32_t* value = static_cast<int32_t*>(item->value_ptr);
-            int64_t increment = (int64_t)((int32_t)(uintptr_t)item->increment) * delta;
-            int64_t min = (int32_t)(uintptr_t)item->lower_limit;
-            int64_t max = (int32_t)(uintptr_t)item->upper_limit;
-            int64_t range = (max - min) + 1;
+            int32_t* value = static_cast<int32_t*>(item->pointer.data);
+            int64_t increment = item->increment.i32 * delta;
+            int32_t min = item->lower_limit.i32;
+            int32_t max = item->upper_limit.i32;
+            int64_t range = ((int64_t)max - min) + 1;
             int64_t temp = *value + increment;
             temp = min + (((temp - min) % range) + range) % range;
             *value = (int32_t)temp;
             return;}
+    case ConfigType::TYPE_FLOAT: {
+        float* value = static_cast<float*>(item->pointer.data);
+        float increment = item->increment.f * delta;
+        float min = item->lower_limit.f;
+        float max = item->upper_limit.f;
+        float range = max - min;
+        if (range <= 0.0f) return; 
+        float offset_value = (*value + increment) - min;
+        float remainder = fmodf(offset_value, range);
+        if (remainder < 0.0f) {
+            remainder += range;
+        *value = min + remainder;
+        return;}
         }
     }
 
@@ -159,7 +158,7 @@ void M5Config::_render(){
         String current_item_name = item->name;
         String current_item_value = _formatValue(item);
         uint16_t value_color = _theme.value_color;
-        if(item->type == ConfigType::TYPE_BOOL){value_color = (*(bool*)item->value_ptr) ? _theme.bool_true_color : _theme.bool_false_color;}
+        if(item->type == ConfigType::TYPE_BOOL){value_color = (*(bool*)item->pointer.data) ? _theme.bool_true_color : _theme.bool_false_color;}
 
         if(i == selection_cursor and menu_size != 0){
             _canvas->fillRect(0, draw_offset, _width, _theme.item_height, _theme.selection_color);
@@ -272,12 +271,12 @@ void M5Config::process_input(Input input){
         case ConfigType::TYPE_BOOL:{_incrementValue(&current_selection,1); break;}
         case ConfigType::TYPE_SUBMENU:{
             ConfigMenu* menu =
-                static_cast<ConfigMenu*>(current_selection.value_ptr);
+                static_cast<ConfigMenu*>(current_selection.pointer.data);
 
             goToMenu(menu, true);
             break;
         }
-        case ConfigType::TYPE_FUNCTION:{current_selection.function(); ran_function = true; break;}
+        case ConfigType::TYPE_FUNCTION:{current_selection.pointer.function(); ran_function = true; break;}
 
         default:{break;}
         }
