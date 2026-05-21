@@ -98,12 +98,6 @@ M5Config::ConfigItem configs[] = {
         .increment = {.i32 = 1}, .lower_limit = {.i32 = -2147483648}, .upper_limit = {.i32 = 2147483647}
     },
     {
-        .name = "float",    
-        .type = config.TYPE_FLOAT,    
-        .pointer = {.data = &item12}, 
-        .increment = {.f = 0.1f}, .lower_limit = {.f = -0.1f}, .upper_limit = {.f = 1.5f}
-    },
-    {
         .name = "bool",     
         .type = config.TYPE_BOOL,     
         .pointer = {.data = &item7}, 

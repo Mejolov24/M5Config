@@ -124,22 +124,9 @@ void M5Config::_incrementValue(ConfigItem* item, int8_t delta){
             temp = min + (((temp - min) % range) + range) % range;
             *value = (int32_t)temp;
             return;}
-    case ConfigType::TYPE_FLOAT: {
-        float* value = static_cast<float*>(item->pointer.data);
-        float increment = item->increment.f * delta;
-        float min = item->lower_limit.f;
-        float max = item->upper_limit.f;
-        float range = max - min;
-        if (range <= 0.0f) return; 
-        float offset_value = (*value + increment) - min;
-        float remainder = fmodf(offset_value, range);
-        if (remainder < 0.0f) {
-            remainder += range;
-        *value = min + remainder;
-        return;}
+
         }
     }
-
 void M5Config::_render(){
     if (_canvas == nullptr) return;
     if (!_active) return;
