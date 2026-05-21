@@ -28,43 +28,49 @@ class M5Config{
         TYPE_INT32_T,
         TYPE_BOOL,
         TYPE_ENUM,
-        TYPE_STRING,
         TYPE_SUBMENU,
         TYPE_FUNCTION
     };
 
     struct ConfigItem
     {
-        ConfigType type;
         const char* name;
+        ConfigType type;
         union {
                 void* value_ptr;
                 void (*function)();
             };
-        int increment;
-        int upper_limit;
-        int lower_limit;
+        void* increment;
+        void* lower_limit;
+        void* upper_limit;
     };
     
-    typedef void (*SettingInteracted)(ConfigItem*, int delta); // delta is the absolute increment of the config item, will be 0 if its a callback
+    struct ConfigMenu{
+        ConfigItem* config_items;
+        uint16_t size;
+    };
+
+    typedef void (*SettingInteracted)(ConfigItem*); // delta is the absolute increment of the config item, will be 0 if its a callback
 
     private:
     M5Canvas* _canvas;
     ExplorerTheme _theme;
     SettingInteracted _callback = nullptr;
+    ConfigMenu* _menuStack[MAX_DEPTH];
     uint8_t _width = 0;
     uint8_t _half_width = 0;
     uint8_t _height = 0;
     int8_t _cursor_index = 0; // selection position
     uint16_t _cursor_offset = 0; // real position
     uint16_t _selection = 0; // global pos of selection
-    
-    ConfigItem* _pageStack[MAX_DEPTH];
+    uint16_t _stack_index = 0;
 
     bool _had_theme = false; // set to true forever when default theme get overwritten
     bool _active = false; 
     void _goBack();
     void _render();
+    void _SetValue(ConfigItem* item, void* value);
+    String _formatValue(ConfigItem* item);
 
     public:
 
@@ -81,7 +87,7 @@ class M5Config{
     void setTheme(ExplorerTheme* theme = nullptr);
     void open(); // opens the file picker, wrapper or _active
     void close(); // closes the file picker
-    void goToAbsoluteDir(const char* path);
+    void goToMenu(ConfigMenu* menu, bool append = false);
     void process_input(Input input);
 };
 
