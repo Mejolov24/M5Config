@@ -49,7 +49,7 @@ theme.font = &fonts::FreeSans12pt7b;
 
 
 config.begin(&canvas,OnSelection);
-config.setTheme(&theme);
+//config.setTheme(&theme);
 config.goToMenu(&menu);
 config.open(); // if an argument is not providen, it will use defualts or latest config.
 }
@@ -60,6 +60,8 @@ void loop(){
     auto keys = M5Cardputer.Keyboard.keysState();
     if (M5Cardputer.Keyboard.isKeyPressed(';')){config.process_input(config.UP);}
     if (M5Cardputer.Keyboard.isKeyPressed('.')){config.process_input(config.DOWN);}
+    if (M5Cardputer.Keyboard.isKeyPressed(',')){config.process_input(config.LEFT);}
+    if (M5Cardputer.Keyboard.isKeyPressed('/')){config.process_input(config.RIGHT);}
     if (keys.enter){config.process_input(config.SELECT);}
     if (keys.del){config.process_input(config.BACK);}
     

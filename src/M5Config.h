@@ -69,7 +69,7 @@ class M5Config{
     bool _active = false; 
     void _goBack();
     void _render();
-    void _SetValue(ConfigItem* item, void* value);
+    void _incrementValue(ConfigItem* item, int8_t delta);
     String _formatValue(ConfigItem* item);
 
     public:

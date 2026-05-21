@@ -41,7 +41,7 @@ String M5Config::_formatValue(ConfigItem* item){
     return "";
 }
 
-void M5Config::_SetValue(ConfigItem* item, void* value){
+void M5Config::_incrementValue(ConfigItem* item, int8_t delta){
     if(item->value_ptr == nullptr )
     {return;}
     
@@ -49,17 +49,90 @@ void M5Config::_SetValue(ConfigItem* item, void* value){
         case ConfigType::TYPE_SUBMENU:
         case ConfigType::TYPE_FUNCTION:
         return;
-        case ConfigType::TYPE_BOOL:{*static_cast<bool*>(item->value_ptr) = *static_cast<bool*>(value); return;}
-        case ConfigType::TYPE_ENUM:{*static_cast<int*>(item->value_ptr) = *static_cast<bool*>(value); return;}
+        case ConfigType::TYPE_BOOL:{
+            bool* value = static_cast<bool*>(item->value_ptr);
+            *value = !(*value);
+            return;
+        }
+        case ConfigType::TYPE_ENUM:{
+            int* value = static_cast<int*>(item->value_ptr);
+            int increment = (int)((uint)(uintptr_t)item->increment) * delta;
+            int min = (int)(uintptr_t)item->lower_limit;
+            int max = (int)(uintptr_t)item->upper_limit;
+            int range = (max - min) + 1;
+            int temp = *value + increment;
+            temp = min + (((temp - min) % range) + range) % range;
+            *value = (int)temp;
+            return;}
 
-        case ConfigType::TYPE_UINT8_T:{*static_cast<uint8_t*>(item->value_ptr) = *static_cast<bool*>(value); return;}
-        case ConfigType::TYPE_UINT16_T:{*static_cast<uint16_t*>(item->value_ptr) = *static_cast<bool*>(value); return;}
-        case ConfigType::TYPE_UINT32_T:{*static_cast<uint32_t*>(item->value_ptr) = *static_cast<bool*>(value); return;}
-        case ConfigType::TYPE_INT8_T:{*static_cast<int8_t*>(item->value_ptr) = *static_cast<bool*>(value); return;}
-        case ConfigType::TYPE_INT16_T:{*static_cast<int16_t*>(item->value_ptr) = *static_cast<bool*>(value); return;}
-        case ConfigType::TYPE_INT32_T:{*static_cast<int32_t*>(item->value_ptr) = *static_cast<bool*>(value); return;}
+        case ConfigType::TYPE_UINT8_T:{
+            uint8_t* value = static_cast<uint8_t*>(item->value_ptr);
+            int increment = (int)((uint8_t)(uintptr_t)item->increment) * delta;
+            int min = (uint8_t)(uintptr_t)item->lower_limit;
+            int max = (uint8_t)(uintptr_t)item->upper_limit;
+            int range = (max - min) + 1;
+            int temp = *value + increment;
+            temp = min + (((temp - min) % range) + range) % range;
+            *value = (uint8_t)temp;
+            return;}
+
+
+        case ConfigType::TYPE_UINT16_T:{
+            uint16_t* value = static_cast<uint16_t*>(item->value_ptr);
+            int increment = (int)((uint16_t)(uintptr_t)item->increment) * delta;
+            int min = (uint16_t)(uintptr_t)item->lower_limit;
+            int max = (uint16_t)(uintptr_t)item->upper_limit;
+            int range = (max - min) + 1;
+            int temp = *value + increment;
+            temp = min + (((temp - min) % range) + range) % range;
+            *value = (uint16_t)temp;
+            return;}
+        case ConfigType::TYPE_UINT32_T:{
+            uint32_t* value = static_cast<uint32_t*>(item->value_ptr);
+            int64_t increment = (int64_t)((uint32_t)(uintptr_t)item->increment) * delta;
+            int64_t min = (uint32_t)(uintptr_t)item->lower_limit;
+            int64_t max = (uint32_t)(uintptr_t)item->upper_limit;
+            int64_t range = (max - min) + 1;
+            int64_t temp = *value + increment;
+            temp = min + (((temp - min) % range) + range) % range;
+            *value = (uint32_t)temp;
+            return;}
+
+        case ConfigType::TYPE_INT8_T:
+            {
+            int8_t* value = static_cast<int8_t*>(item->value_ptr);
+            int increment = (int)((int8_t)(uintptr_t)item->increment) * delta;
+            int min = (int8_t)(uintptr_t)item->lower_limit;
+            int max = (int8_t)(uintptr_t)item->upper_limit;
+            int range = (max - min) + 1;
+            int temp = *value + increment;
+            temp = min + (((temp - min) % range) + range) % range;
+            *value = (int8_t)temp;
+            return;}
+
+        case ConfigType::TYPE_INT16_T:{
+            int16_t* value = static_cast<int16_t*>(item->value_ptr);
+            int increment = (int)((int16_t)(uintptr_t)item->increment) * delta;
+            int min = (int16_t)(uintptr_t)item->lower_limit;
+            int max = (int16_t)(uintptr_t)item->upper_limit;
+            int range = (max - min) + 1;
+            int temp = *value + increment;
+            temp = min + (((temp - min) % range) + range) % range;
+            *value = (int16_t)temp;
+            return;}
+
+        case ConfigType::TYPE_INT32_T:{
+            int32_t* value = static_cast<int32_t*>(item->value_ptr);
+            int64_t increment = (int64_t)((int32_t)(uintptr_t)item->increment) * delta;
+            int64_t min = (int32_t)(uintptr_t)item->lower_limit;
+            int64_t max = (int32_t)(uintptr_t)item->upper_limit;
+            int64_t range = (max - min) + 1;
+            int64_t temp = *value + increment;
+            temp = min + (((temp - min) % range) + range) % range;
+            *value = (int32_t)temp;
+            return;}
+        }
     }
-}
 
 void M5Config::_render(){
     if (_canvas == nullptr) return;
@@ -132,8 +205,7 @@ void M5Config::close(){
 void M5Config::process_input(Input input){
     if (!_active) return;
     uint16_t menu_size = _menuStack[_stack_index]->size;
-    String callback_path = "";
-
+    ConfigItem current_selection = _menuStack[_stack_index]->config_items[_selection];
     switch (input)
     {
     case UP:
@@ -169,9 +241,18 @@ void M5Config::process_input(Input input){
             }
         }
         break;
+    
+    case(LEFT):{
+        _incrementValue(&current_selection,-1);
+        break;
+    }
+    case(RIGHT):{
+        _incrementValue(&current_selection,1);
+        break;
+    }
 
     case (SELECT):
-        {ConfigItem current_selection = _menuStack[_stack_index]->config_items[_selection];
+        {
         if (menu_size == 0) break;
         
         switch (current_selection.type)
