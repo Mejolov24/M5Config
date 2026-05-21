@@ -29,6 +29,7 @@ class M5Config{
         TYPE_INT8_T,
         TYPE_INT16_T,
         TYPE_INT32_T,
+        TYPE_FLOAT,
         TYPE_BOOL,
         TYPE_ENUM,
         TYPE_SUBMENU,

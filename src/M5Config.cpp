@@ -39,6 +39,12 @@ String M5Config::_formatValue(ConfigItem* item){
         case ConfigType::TYPE_INT8_T:{return String(*static_cast<int8_t*>(item->value_ptr));}
         case ConfigType::TYPE_INT16_T:{return String(*static_cast<int16_t*>(item->value_ptr));}
         case ConfigType::TYPE_INT32_T:{return String(*static_cast<int32_t*>(item->value_ptr));}
+        case ConfigType::TYPE_FLOAT:{
+            char buf[16];
+            float val = *static_cast<float*>(item->value_ptr);
+            snprintf(buf, sizeof(buf), "%g", val);
+            return buf;
+        }
     }
     return "";
 }
