@@ -13,7 +13,7 @@ bool item7 = false;
 uint8_t item8 = 0;
 uint8_t item9 = 0;
 
-uint8_t item11 = 0; // can also be declared like this for readability:
+uint8_t item11 = 0; // can also be declared like this
 uint8_t item11_increment = 1;
 uint8_t item11_min = 0;
 uint8_t item11_max = 5;
@@ -27,28 +27,26 @@ void item10(){
     canvas.pushSprite(0,0);
 }
 
-#define VPTR(x) ((void*)(uintptr_t)(x))
-
 
 M5Config::ConfigItem configs2[] = {
-    {"0-10",  config.TYPE_UINT8_T,  &item8, VPTR(1), VPTR(0), VPTR(10)},
-    {"0-100, +10", config.TYPE_UINT8_T, &item9, VPTR(10), VPTR(0), VPTR(100)},
-    {"function",   config.TYPE_FUNCTION, nullptr,nullptr,nullptr,nullptr,item10},
-    {"declaration 1",  config.TYPE_UINT8_T,  &item11, &item11_increment, &item11_min, &item11_max}
+    {"0-10",  config.TYPE_UINT8_T,  &item8, 1,0,1},
+    {"0-100, +10", config.TYPE_UINT8_T, &item9, 10,0,100},
+    {"function",   config.TYPE_FUNCTION, item10},
+    {"declaration 2",  config.TYPE_UINT8_T,  &item11, item11_increment, item11_min, item11_max}
 };
 M5Config::ConfigMenu menu2 = {configs2, sizeof(configs2) / sizeof(configs2[0])};
 
 M5Config::ConfigItem configs[] = {
-    {"uint8_t",  config.TYPE_UINT8_T,  &item1, VPTR(1), VPTR(0), VPTR(255)},
-    {"uint16_t", config.TYPE_UINT16_T, &item2, VPTR(1), VPTR(0), VPTR(65535)},
-    {"uint32_t", config.TYPE_UINT32_T, &item3, VPTR(1), VPTR(0), VPTR(4294967295)},
+    {"uint8_t",  config.TYPE_UINT8_T,  &item1, 1, 0, 255},
+    {"uint16_t", config.TYPE_UINT16_T, &item2, 1, 0, 65535},
+    {"uint32_t", config.TYPE_UINT32_T, &item3, 1, 0, 4294967295},
 
-    {"int8_t",   config.TYPE_INT8_T,   &item4, VPTR(1), VPTR(-128), VPTR(127)},
-    {"int16_t",  config.TYPE_INT16_T,  &item5, VPTR(1), VPTR(-32768), VPTR(32767)},
-    {"int32_t",  config.TYPE_INT32_T,  &item6, VPTR(1), VPTR(-2147483648), VPTR(2147483647)},
+    {"int8_t",   config.TYPE_INT8_T,   &item4, 1, -128, 127},
+    {"int16_t",  config.TYPE_INT16_T,  &item5, 1, -32768, 32767},
+    {"int32_t",  config.TYPE_INT32_T,  &item6, 1, -2147483648, 2147483647},
+    {"float",  config.TYPE_FLOAT,  &item6, 0.1f, -0.1f, 1.5f},
 
-    
-    {"bool",config.TYPE_BOOL,&item7,VPTR(1),VPTR(0),VPTR(1)},
+    {"bool",config.TYPE_BOOL,&item7,1,0,1},
     {"sub menu",config.TYPE_SUBMENU,&menu2}
 };
 

@@ -36,15 +36,30 @@ class M5Config{
         TYPE_FUNCTION
     };
 
+    union Increment {
+        uint8_t u8;
+        uint16_t u16;
+        uint32_t u32;
+        int8_t i8;
+        int16_t i16;
+        int32_t i32;
+        float f;
+    };
+
+    union Pointer {
+        void* value_ptr;
+        void (*function)();
+    };
+
     struct ConfigItem
     {
         const char* name;
         ConfigType type;
-        void* value_ptr;
-        void* increment;
-        void* lower_limit;
-        void* upper_limit;
-        void (*function)();
+        Pointer pointer;
+        Increment increment;
+        Increment lower_limit;
+        Increment upper_limit;
+        
     };
     
     struct ConfigMenu{
