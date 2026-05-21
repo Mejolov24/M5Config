@@ -16,6 +16,8 @@ void M5Config::goToMenu(ConfigMenu* menu, bool append){
         _stack_index = 0;
         _menuStack[0] = menu;
     }
+    _cursor_offset = 0;
+    _cursor_index = 0;
     _render();
     return;
 }
@@ -28,7 +30,7 @@ String M5Config::_formatValue(ConfigItem* item){
         case ConfigType::TYPE_SUBMENU:
         case ConfigType::TYPE_FUNCTION:
         return "";
-        case ConfigType::TYPE_BOOL:{return String((*static_cast<bool*>(item->value_ptr)) ? "ON" : "OFF");}
+        case ConfigType::TYPE_BOOL:{return String((*static_cast<bool*>(item->value_ptr)) ? "On" : "Off");}
         case ConfigType::TYPE_ENUM:{return String(*static_cast<int*>(item->value_ptr));}
 
         case ConfigType::TYPE_UINT8_T:{return String(*static_cast<uint8_t*>(item->value_ptr));}
@@ -42,8 +44,7 @@ String M5Config::_formatValue(ConfigItem* item){
 }
 
 void M5Config::_incrementValue(ConfigItem* item, int8_t delta){
-    if(item->value_ptr == nullptr )
-    {return;}
+    if(item->value_ptr == nullptr) return;
     
     switch (item->type){
         case ConfigType::TYPE_SUBMENU:
@@ -138,7 +139,6 @@ void M5Config::_render(){
     if (_canvas == nullptr) return;
     if (!_active) return;
     _canvas->fillScreen(_theme.background_color);
-    _canvas->setTextColor(_theme.text_color);
     uint16_t menu_size = _menuStack[_stack_index]->size;
     uint16_t draw_offset = 0;
     uint16_t selection_cursor = _cursor_offset + _cursor_index;
@@ -152,6 +152,8 @@ void M5Config::_render(){
         ConfigItem* item = &_menuStack[_stack_index]->config_items[i];
         String current_item_name = item->name;
         String current_item_value = _formatValue(item);
+        uint16_t value_color = _theme.value_color;
+        if(item->type == ConfigType::TYPE_BOOL){value_color = (*(bool*)item->value_ptr) ? _theme.bool_true_color : _theme.bool_false_color;}
 
         if(i == selection_cursor and menu_size != 0){
             _canvas->fillRect(0, draw_offset, _width, _theme.item_height, _theme.selection_color);
@@ -159,9 +161,12 @@ void M5Config::_render(){
     
         _canvas->drawRect(0, draw_offset, _width, _theme.item_height, _theme.border_color);
         _canvas->setTextDatum(TL_DATUM);
+        _canvas->setTextColor(_theme.text_color);
         _canvas->drawString(current_item_name, 0, draw_offset, _theme.font);
         canvas.setTextDatum(TR_DATUM);
+        _canvas->setTextColor(value_color);
         _canvas->drawString(current_item_value,_width,draw_offset,_theme.font);
+        _canvas->setTextDatum(TL_DATUM);
         draw_offset += _theme.item_height;
 
     }
@@ -206,6 +211,7 @@ void M5Config::process_input(Input input){
     if (!_active) return;
     uint16_t menu_size = _menuStack[_stack_index]->size;
     ConfigItem current_selection = _menuStack[_stack_index]->config_items[_selection];
+    bool ran_function = false;
     switch (input)
     {
     case UP:
@@ -257,9 +263,15 @@ void M5Config::process_input(Input input){
         
         switch (current_selection.type)
         {
-        case ConfigType::TYPE_BOOL:{break;}
-        case ConfigType::TYPE_SUBMENU:{break;}
-        case ConfigType::TYPE_FUNCTION:{break;}
+        case ConfigType::TYPE_BOOL:{_incrementValue(&current_selection,1); break;}
+        case ConfigType::TYPE_SUBMENU:{
+            ConfigMenu* menu =
+                static_cast<ConfigMenu*>(current_selection.value_ptr);
+
+            goToMenu(menu, true);
+            break;
+        }
+        case ConfigType::TYPE_FUNCTION:{current_selection.function(); ran_function = true; break;}
 
         default:{break;}
         }
@@ -274,7 +286,7 @@ void M5Config::process_input(Input input){
     break;
     }
     _selection = _cursor_offset + _cursor_index;
-    _render();
+    if (not ran_function) _render();
     if (!_callback) return;
-    //_callback(ConfigItem current_selection = _menuStack[_stack_index]->config_items[_selection]);
+    _callback(&current_selection);
 }

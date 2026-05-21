@@ -14,6 +14,9 @@ class M5Config{
         uint16_t border_color = WHITE;
         uint16_t selection_color = BLUE;
         uint16_t text_color = WHITE;
+        uint16_t value_color = YELLOW;
+        uint16_t bool_true_color = GREEN;
+        uint16_t bool_false_color = RED;
         uint16_t item_height = 16;
         uint16_t item_window = 6;
         const lgfx::v1::IFont* font = &fonts::Font2;
@@ -36,13 +39,11 @@ class M5Config{
     {
         const char* name;
         ConfigType type;
-        union {
-                void* value_ptr;
-                void (*function)();
-            };
+        void* value_ptr;
         void* increment;
         void* lower_limit;
         void* upper_limit;
+        void (*function)();
     };
     
     struct ConfigMenu{
@@ -50,7 +51,7 @@ class M5Config{
         uint16_t size;
     };
 
-    typedef void (*SettingInteracted)(ConfigItem*); // delta is the absolute increment of the config item, will be 0 if its a callback
+    typedef void (*SettingInteracted)(ConfigItem*);
 
     private:
     M5Canvas* _canvas;
@@ -69,7 +70,7 @@ class M5Config{
     bool _active = false; 
     void _goBack();
     void _render();
-    void _incrementValue(ConfigItem* item, int8_t delta);
+    void _incrementValue(ConfigItem* item, int8_t delta); // delta is the magnitude of the increment, so either -1 or 1
     String _formatValue(ConfigItem* item);
 
     public:
