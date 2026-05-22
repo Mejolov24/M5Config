@@ -43,7 +43,6 @@ M5Config::ConfigItem configs2[] = {
         10,
         0,
         100,
-        false
     },
     {
         "function",

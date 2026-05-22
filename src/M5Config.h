@@ -80,7 +80,7 @@ public:
         Increment lower_limit;
         Increment upper_limit;
 
-        bool inclusive;
+        bool include_max;
 
         // =========================
         // GENERIC NUMERIC CONSTRUCTOR
@@ -96,7 +96,7 @@ public:
         )
             : name(n),
               type(TYPE_UINT8_T), // temporary, fixed below
-              inclusive(incl)
+              include_max(incl)
         {
             pointer.data = ptr;
 
@@ -153,7 +153,7 @@ public:
         ConfigItem(const char* n, void (*func)())
             : name(n),
               type(TYPE_FUNCTION),
-              inclusive(true)
+              include_max(true)
         {
             pointer.function = func;
         }
@@ -163,7 +163,7 @@ public:
         ConfigItem(const char* n, bool* ptr)
             : name(n),
               type(TYPE_BOOL),
-              inclusive(true)
+              include_max(true)
         {
             pointer.data = ptr;
             increment.u8 = 1;
@@ -175,7 +175,7 @@ public:
         ConfigItem(const char* n, ConfigMenu* submenu)
             : name(n),
               type(TYPE_SUBMENU),
-              inclusive(true)
+              include_max(true)
         {
             pointer.data = submenu;
         }
