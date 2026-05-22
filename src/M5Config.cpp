@@ -37,12 +37,6 @@ String M5Config::_formatValue(ConfigItem* item){
         case ConfigType::TYPE_INT8_T:{return String(*static_cast<int8_t*>(item->pointer.data));}
         case ConfigType::TYPE_INT16_T:{return String(*static_cast<int16_t*>(item->pointer.data));}
         case ConfigType::TYPE_INT32_T:{return String(*static_cast<int32_t*>(item->pointer.data));}
-        case ConfigType::TYPE_FLOAT:{
-            char buf[16];
-            float val = *static_cast<float*>(item->pointer.data);
-            snprintf(buf, sizeof(buf), "%g", val);
-            return buf;
-        }
     }
     return "";
 }
@@ -65,7 +59,7 @@ void M5Config::_incrementValue(ConfigItem* item, int8_t delta){
             int16_t increment = item->increment.u8 * delta;
             uint8_t min = item->lower_limit.u8;
             uint8_t max = item->upper_limit.u8;
-            int16_t range = (max - min) + 1;
+            int16_t range = (max - min) + item->inclusive;
             int16_t temp = *value + increment;
             temp = min + (((temp - min) % range) + range) % range;
             *value = (uint8_t)temp;
@@ -76,7 +70,7 @@ void M5Config::_incrementValue(ConfigItem* item, int8_t delta){
             int32_t increment = item->increment.u16 * delta;
             uint16_t min = item->lower_limit.u16;
             uint16_t max = item->upper_limit.u16;
-            int32_t range = (max - min) + 1;
+            int32_t range = (max - min) + item->inclusive;
             int32_t temp = *value + increment;
             temp = min + (((temp - min) % range) + range) % range;
             *value = (uint16_t)temp;
@@ -86,7 +80,7 @@ void M5Config::_incrementValue(ConfigItem* item, int8_t delta){
             int64_t increment = item->increment.u32 * delta;
             uint32_t min = item->lower_limit.u32;
             uint32_t max = item->upper_limit.u32;
-            int64_t range = ((int64_t)max - min) + 1;
+            int64_t range = ((int64_t)max - min) + item->inclusive;
             int64_t temp = *value + increment;
             temp = min + (((temp - min) % range) + range) % range;
             *value = (uint32_t)temp;
@@ -97,7 +91,7 @@ void M5Config::_incrementValue(ConfigItem* item, int8_t delta){
             int16_t increment = item->increment.i8 * delta;
             int8_t min = item->lower_limit.i8;
             int8_t max = item->upper_limit.i8;
-            int16_t range = (max - min) + 1;
+            int16_t range = (max - min) + item->inclusive;
             int16_t temp = *value + increment;
             temp = min + (((temp - min) % range) + range) % range;
             *value = (int8_t)temp;
@@ -108,7 +102,7 @@ void M5Config::_incrementValue(ConfigItem* item, int8_t delta){
             int32_t increment = item->increment.i16 * delta;
             int16_t min = item->lower_limit.i16;
             int16_t max = item->upper_limit.i16;
-            int32_t range = (max - min) + 1;
+            int32_t range = (max - min) + item->inclusive;
             int32_t temp = *value + increment;
             temp = min + (((temp - min) % range) + range) % range;
             *value = (int16_t)temp;
@@ -119,7 +113,7 @@ void M5Config::_incrementValue(ConfigItem* item, int8_t delta){
             int64_t increment = item->increment.i32 * delta;
             int32_t min = item->lower_limit.i32;
             int32_t max = item->upper_limit.i32;
-            int64_t range = ((int64_t)max - min) + 1;
+            int64_t range = ((int64_t)max - min) + item->inclusive;
             int64_t temp = *value + increment;
             temp = min + (((temp - min) % range) + range) % range;
             *value = (int32_t)temp;

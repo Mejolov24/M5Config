@@ -1,15 +1,33 @@
 #ifndef M5CONFIG_H
 #define M5CONFIG_H
+
 #ifndef MAX_DEPTH
-    #define MAX_DEPTH 8
+#define MAX_DEPTH 8
 #endif
+
 #include <stdint.h>
+#include <type_traits>
 #include <Arduino.h>
 #include <M5GFX.h>
+
 extern M5Canvas canvas;
-class M5Config{
-    public:
-    struct ExplorerTheme{
+
+class M5Config
+{
+public:
+
+    // =========================
+    // FORWARD DECLARATIONS
+    // =========================
+    struct ConfigMenu;
+
+    // =========================
+    // TYPES
+    // =========================
+    struct ConfigItem;
+    using SettingInteracted = void (*)(ConfigItem*);
+
+    struct ExplorerTheme {
         uint16_t background_color = BLACK;
         uint16_t border_color = WHITE;
         uint16_t selection_color = BLUE;
@@ -22,7 +40,7 @@ class M5Config{
         const lgfx::v1::IFont* font = &fonts::Font2;
     };
 
-    enum ConfigType{
+    enum ConfigType {
         TYPE_UINT8_T,
         TYPE_UINT16_T,
         TYPE_UINT32_T,
@@ -49,47 +67,155 @@ class M5Config{
         void (*function)();
     };
 
+    // =========================
+    // CONFIG ITEM
+    // =========================
     struct ConfigItem
     {
         const char* name;
         ConfigType type;
+
         Pointer pointer;
         Increment increment;
         Increment lower_limit;
         Increment upper_limit;
-        
+
+        bool inclusive;
+
+        // =========================
+        // GENERIC NUMERIC CONSTRUCTOR
+        // =========================
+        template<typename T, typename A, typename B, typename C>
+        ConfigItem(
+            const char* n,
+            T* ptr,
+            A inc,
+            B min,
+            C max,
+            bool incl = true
+        )
+            : name(n),
+              type(TYPE_UINT8_T), // temporary, fixed below
+              inclusive(incl)
+        {
+            pointer.data = ptr;
+
+            if constexpr (std::is_same<T, uint8_t>::value) {
+                type = TYPE_UINT8_T;
+                increment.u8 = inc;
+                lower_limit.u8 = min;
+                upper_limit.u8 = max;
+            }
+            else if constexpr (std::is_same<T, uint16_t>::value) {
+                type = TYPE_UINT16_T;
+                increment.u16 = inc;
+                lower_limit.u16 = min;
+                upper_limit.u16 = max;
+            }
+            else if constexpr (std::is_same<T, uint32_t>::value) {
+                type = TYPE_UINT32_T;
+                increment.u32 = inc;
+                lower_limit.u32 = min;
+                upper_limit.u32 = max;
+            }
+            else if constexpr (std::is_same<T, int8_t>::value) {
+                type = TYPE_INT8_T;
+                increment.i8 = inc;
+                lower_limit.i8 = min;
+                upper_limit.i8 = max;
+            }
+            else if constexpr (std::is_same<T, int16_t>::value) {
+                type = TYPE_INT16_T;
+                increment.i16 = inc;
+                lower_limit.i16 = min;
+                upper_limit.i16 = max;
+            }
+            else if constexpr (std::is_same<T, int32_t>::value) {
+                type = TYPE_INT32_T;
+                increment.i32 = inc;
+                lower_limit.i32 = min;
+                upper_limit.i32 = max;
+            }
+            else if constexpr (std::is_same<T, bool>::value) {
+                type = TYPE_BOOL;
+                increment.u8 = inc;
+                lower_limit.u8 = min;
+                upper_limit.u8 = max;
+            }
+            else {
+                static_assert(!std::is_same<T, T>::value,
+                              "Unsupported ConfigItem type");
+            }
+        }
+
+        // function constructor
+
+        ConfigItem(const char* n, void (*func)())
+            : name(n),
+              type(TYPE_FUNCTION),
+              inclusive(true)
+        {
+            pointer.function = func;
+        }
+
+        // bool constructor
+
+        ConfigItem(const char* n, bool* ptr)
+            : name(n),
+              type(TYPE_BOOL),
+              inclusive(true)
+        {
+            pointer.data = ptr;
+            increment.u8 = 1;
+            lower_limit.u8 = 0;
+            upper_limit.u8 = 1;
+        }
+
+        //submenu constructor
+        ConfigItem(const char* n, ConfigMenu* submenu)
+            : name(n),
+              type(TYPE_SUBMENU),
+              inclusive(true)
+        {
+            pointer.data = submenu;
+        }
     };
-    
-    struct ConfigMenu{
+
+    struct ConfigMenu {
         ConfigItem* config_items;
         uint16_t size;
     };
 
-    typedef void (*SettingInteracted)(ConfigItem*);
 
-    private:
+private:
+
     M5Canvas* _canvas;
+
     ExplorerTheme _theme;
     SettingInteracted _callback = nullptr;
+
     ConfigMenu* _menuStack[MAX_DEPTH];
+
     uint8_t _width = 0;
     uint8_t _half_width = 0;
     uint8_t _height = 0;
-    int8_t _cursor_index = 0; // selection position
-    uint16_t _cursor_offset = 0; // real position
-    uint16_t _selection = 0; // global pos of selection
+
+    int8_t _cursor_index = 0;
+    uint16_t _cursor_offset = 0;
+    uint16_t _selection = 0;
     uint16_t _stack_index = 0;
 
-    bool _had_theme = false; // set to true forever when default theme get overwritten
-    bool _active = false; 
+    bool _had_theme = false;
+    bool _active = false;
+
     void _goBack();
     void _render();
-    void _incrementValue(ConfigItem* item, int8_t delta); // delta is the magnitude of the increment, so either -1 or 1
+    void _incrementValue(ConfigItem* item, int8_t delta);
     String _formatValue(ConfigItem* item);
 
-    public:
+public:
 
-    enum Input{
+    enum Input {
         UP,
         DOWN,
         LEFT,
@@ -100,12 +226,10 @@ class M5Config{
 
     void begin(M5Canvas* targetCanvas, SettingInteracted callback);
     void setTheme(ExplorerTheme* theme = nullptr);
-    void open(); // opens the file picker, wrapper or _active
-    void close(); // closes the file picker
+    void open();
+    void close();
     void goToMenu(ConfigMenu* menu, bool append = false);
     void process_input(Input input);
 };
-
-
 
 #endif

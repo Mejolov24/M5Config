@@ -31,27 +31,30 @@ void item10(){
 
 M5Config::ConfigItem configs2[] = {
     {
-        .name = "0-10", 
-        .type = config.TYPE_UINT8_T, 
-        .pointer = {.data = &item8}, 
-        .increment = {.u8 = 1}, .lower_limit = {.u8 = 0}, .upper_limit = {.u8 = 10}
+        "0-10",
+        &item8,
+        1,
+        0,
+        10
     },
     {
-        .name = "0-100, +10", 
-        .type = config.TYPE_UINT8_T, 
-        .pointer = {.data = &item9}, 
-        .increment = {.u8 = 10}, .lower_limit = {.u8 = 0}, .upper_limit = {.u8 = 100}
+        "0-100, +10", 
+        &item9,
+        10,
+        0,
+        100,
+        false
     },
     {
-        .name = "function",   
-        .type = config.TYPE_FUNCTION, 
-        .pointer = {.function = item10} // Sets the function pointer slot
+        "function",
+        item10 
     },
     {
-        .name = "declaration 2", 
-        .type = config.TYPE_UINT8_T, 
-        .pointer = {.data = &item11}, 
-        .increment = {.u8 = item11_increment}, .lower_limit = {.u8 = item11_min}, .upper_limit = {.u8 = item11_max}
+        "declaration 2",
+        &item11, 
+        item11_increment,
+        item11_min,
+        item11_max
     }
 };
 
@@ -62,51 +65,54 @@ M5Config::ConfigMenu menu2 = {
 
 M5Config::ConfigItem configs[] = {
     {
-        .name = "uint8_t",  
-        .type = config.TYPE_UINT8_T,  
-        .pointer = {.data = &item1}, 
-        .increment = {.u8 = 1}, .lower_limit = {.u8 = 0}, .upper_limit = {.u8 = 255}
+        "uint8_t",
+        &item1,
+        1,
+        0,
+        UINT8_MAX
     },
     {
-        .name = "uint16_t", 
-        .type = config.TYPE_UINT16_T, 
-        .pointer = {.data = &item2}, 
-        .increment = {.u16 = 1}, .lower_limit = {.u16 = 0}, .upper_limit = {.u16 = 65535}
+        "uint16_t",
+        &item2,
+        1,
+        0,
+        UINT16_MAX
     },
     {
-        .name = "uint32_t", 
-        .type = config.TYPE_UINT32_T, 
-        .pointer = {.data = &item3}, 
-        .increment = {.u32 = 1}, .lower_limit = {.u32 = 0}, .upper_limit = {.u32 = 4294967295}
+        "uint32_t",
+        &item3,
+        1,
+        0,
+        UINT32_MAX
     },
     {
-        .name = "int8_t",   
-        .type = config.TYPE_INT8_T,   
-        .pointer = {.data = &item4}, 
-        .increment = {.i8 = 1}, .lower_limit = {.i8 = -128}, .upper_limit = {.i8 = 127}
+        "int8_t",
+        &item4,
+        31,
+        INT8_MIN,
+        INT8_MAX
     },
     {
-        .name = "int16_t",  
-        .type = config.TYPE_INT16_T,  
-        .pointer = {.data = &item5}, 
-        .increment = {.i16 = 1}, .lower_limit = {.i16 = -32768}, .upper_limit = {.i16 = 32767}
+        "int16_t",
+        &item5,
+        1,
+        INT16_MIN,
+        INT16_MAX
     },
     {
-        .name = "int32_t",  
-        .type = config.TYPE_INT32_T,  
-        .pointer = {.data = &item6}, 
-        .increment = {.i32 = 1}, .lower_limit = {.i32 = -2147483648}, .upper_limit = {.i32 = 2147483647}
+        "int32_t",
+        &item6,
+        1,
+        INT32_MIN,
+        INT32_MAX
     },
     {
-        .name = "bool",     
-        .type = config.TYPE_BOOL,     
-        .pointer = {.data = &item7}, 
-        .increment = {.u8 = 1}, .lower_limit = {.u8 = 0}, .upper_limit = {.u8 = 1}
+        "bool",
+        &item7
     },
     {
-        .name = "sub menu", 
-        .type = config.TYPE_SUBMENU,  
-        .pointer = {.data = &menu2}
+        "sub menu",
+        &menu2
     }
 };
 
