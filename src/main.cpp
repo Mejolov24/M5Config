@@ -31,11 +31,11 @@ void item10(){
 
 M5Config::ConfigItem configs2[] = {
     {
-        "0-10",
-        &item8,
-        1,
-        0,
-        10
+        "0-10", // name
+        &item8, // pointer to variable
+        1, // increment
+        0, // minimum
+        10 // maximum
     },
     {
         "0-100, +10", 
@@ -46,7 +46,7 @@ M5Config::ConfigItem configs2[] = {
     },
     {
         "function",
-        item10 
+        item10 // function pointer
     },
     {
         "declaration 2",
@@ -87,7 +87,7 @@ M5Config::ConfigItem configs[] = {
     {
         "int8_t",
         &item4,
-        31,
+        1,
         INT8_MIN,
         INT8_MAX
     },
@@ -152,12 +152,12 @@ void loop(){
   M5Cardputer.update();
     if (M5Cardputer.Keyboard.isChange()) {
     auto keys = M5Cardputer.Keyboard.keysState();
-    if (M5Cardputer.Keyboard.isKeyPressed(';')){config.process_input(config.UP);}
-    if (M5Cardputer.Keyboard.isKeyPressed('.')){config.process_input(config.DOWN);}
-    if (M5Cardputer.Keyboard.isKeyPressed(',')){config.process_input(config.LEFT);}
-    if (M5Cardputer.Keyboard.isKeyPressed('/')){config.process_input(config.RIGHT);}
-    if (keys.enter){config.process_input(config.SELECT);}
-    if (keys.del){config.process_input(config.BACK);}
+    if (M5Cardputer.Keyboard.isKeyPressed(';')){config.process_input(M5Config::Input::UP);}
+    if (M5Cardputer.Keyboard.isKeyPressed('.')){config.process_input(M5Config::Input::DOWN);}
+    if (M5Cardputer.Keyboard.isKeyPressed(',')){config.process_input(M5Config::Input::LEFT);}
+    if (M5Cardputer.Keyboard.isKeyPressed('/')){config.process_input(M5Config::Input::RIGHT);}
+    if (keys.enter){config.process_input(M5Config::Input::SELECT);}
+    if (keys.del){config.process_input(M5Config::Input::BACK);}
     
     if (M5Cardputer.Keyboard.isKeyPressed('=')){config.open();}
     if (M5Cardputer.Keyboard.isKeyPressed('-')){

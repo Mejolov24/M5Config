@@ -27,16 +27,16 @@ String M5Config::_formatValue(ConfigItem* item){
     {return "";}
     
     switch (item->type){
-        case ConfigType::TYPE_SUBMENU:
-        case ConfigType::TYPE_FUNCTION:
+        case ValueType::TYPE_SUBMENU:
+        case ValueType::TYPE_FUNCTION:
         return "";
-        case ConfigType::TYPE_BOOL:{return String((*static_cast<bool*>(item->pointer.data)) ? "On" : "Off");}
-        case ConfigType::TYPE_UINT8_T:{return String(*static_cast<uint8_t*>(item->pointer.data));}
-        case ConfigType::TYPE_UINT16_T:{return String(*static_cast<uint16_t*>(item->pointer.data));}
-        case ConfigType::TYPE_UINT32_T:{return String(*static_cast<uint32_t*>(item->pointer.data));}
-        case ConfigType::TYPE_INT8_T:{return String(*static_cast<int8_t*>(item->pointer.data));}
-        case ConfigType::TYPE_INT16_T:{return String(*static_cast<int16_t*>(item->pointer.data));}
-        case ConfigType::TYPE_INT32_T:{return String(*static_cast<int32_t*>(item->pointer.data));}
+        case ValueType::TYPE_BOOL:{return String((*static_cast<bool*>(item->pointer.data)) ? "On" : "Off");}
+        case ValueType::TYPE_UINT8_T:{return String(*static_cast<uint8_t*>(item->pointer.data));}
+        case ValueType::TYPE_UINT16_T:{return String(*static_cast<uint16_t*>(item->pointer.data));}
+        case ValueType::TYPE_UINT32_T:{return String(*static_cast<uint32_t*>(item->pointer.data));}
+        case ValueType::TYPE_INT8_T:{return String(*static_cast<int8_t*>(item->pointer.data));}
+        case ValueType::TYPE_INT16_T:{return String(*static_cast<int16_t*>(item->pointer.data));}
+        case ValueType::TYPE_INT32_T:{return String(*static_cast<int32_t*>(item->pointer.data));}
     }
     return "";
 }
@@ -45,16 +45,16 @@ void M5Config::_incrementValue(ConfigItem* item, int8_t delta){
     if(item->pointer.data == nullptr) return;
     
     switch (item->type){
-        case ConfigType::TYPE_SUBMENU:
-        case ConfigType::TYPE_FUNCTION:
+        case ValueType::TYPE_SUBMENU:
+        case ValueType::TYPE_FUNCTION:
         return;
-        case ConfigType::TYPE_BOOL:{
+        case ValueType::TYPE_BOOL:{
             bool* value = static_cast<bool*>(item->pointer.data);
             *value = !(*value);
             return;
         }
 
-        case ConfigType::TYPE_UINT8_T:{
+        case ValueType::TYPE_UINT8_T:{
             uint8_t* value = static_cast<uint8_t*>(item->pointer.data);
             int16_t increment = item->increment.u8 * delta;
             uint8_t min = item->lower_limit.u8;
@@ -76,7 +76,7 @@ void M5Config::_incrementValue(ConfigItem* item, int8_t delta){
             return;
         }
 
-        case ConfigType::TYPE_UINT16_T:{
+        case ValueType::TYPE_UINT16_T:{
             uint16_t* value = static_cast<uint16_t*>(item->pointer.data);
             int32_t increment = item->increment.u16 * delta;
             uint16_t min = item->lower_limit.u16;
@@ -96,7 +96,7 @@ void M5Config::_incrementValue(ConfigItem* item, int8_t delta){
             return;
         }
 
-        case ConfigType::TYPE_UINT32_T:{
+        case ValueType::TYPE_UINT32_T:{
             uint32_t* value = static_cast<uint32_t*>(item->pointer.data);
             int64_t increment = item->increment.u32 * delta;
             uint32_t min = item->lower_limit.u32;
@@ -115,7 +115,7 @@ void M5Config::_incrementValue(ConfigItem* item, int8_t delta){
             *value = (uint32_t)temp;
             return;
         }
-        case ConfigType::TYPE_INT8_T:{
+        case ValueType::TYPE_INT8_T:{
             int8_t* value = static_cast<int8_t*>(item->pointer.data);
             int16_t increment = item->increment.i8 * delta;
             int8_t min = item->lower_limit.i8;
@@ -134,7 +134,7 @@ void M5Config::_incrementValue(ConfigItem* item, int8_t delta){
             *value = (int8_t)temp;
             return;
         }
-        case ConfigType::TYPE_INT16_T:{
+        case ValueType::TYPE_INT16_T:{
             int16_t* value = static_cast<int16_t*>(item->pointer.data);
             int32_t increment = item->increment.i16 * delta;
             int16_t min = item->lower_limit.i16;
@@ -153,7 +153,7 @@ void M5Config::_incrementValue(ConfigItem* item, int8_t delta){
             *value = (int16_t)temp;
             return;
         }
-        case ConfigType::TYPE_INT32_T:{
+        case ValueType::TYPE_INT32_T:{
             int32_t* value = static_cast<int32_t*>(item->pointer.data);
             int64_t increment = item->increment.i16 * delta;
             int32_t min = item->lower_limit.i16;
@@ -192,7 +192,7 @@ void M5Config::_render(){
         String current_item_name = item->name;
         String current_item_value = _formatValue(item);
         uint16_t value_color = _theme.value_color;
-        if(item->type == ConfigType::TYPE_BOOL){value_color = (*(bool*)item->pointer.data) ? _theme.bool_true_color : _theme.bool_false_color;}
+        if(item->type == ValueType::TYPE_BOOL){value_color = (*(bool*)item->pointer.data) ? _theme.bool_true_color : _theme.bool_false_color;}
 
         if(i == selection_cursor and menu_size != 0){
             _canvas->fillRect(0, draw_offset, _width, _theme.item_height, _theme.selection_color);
@@ -253,7 +253,7 @@ void M5Config::process_input(Input input){
     bool ran_function = false;
     switch (input)
     {
-    case UP:
+    case Input::UP:
         if (menu_size == 0) break;
         _cursor_index--;
         // If we move off the top of the current window
@@ -270,7 +270,7 @@ void M5Config::process_input(Input input){
         }
         break;
 
-    case DOWN:
+    case Input::DOWN:
         if (menu_size == 0) break;
         _cursor_index++;
         // If we move off the bottom of the current window
@@ -287,37 +287,37 @@ void M5Config::process_input(Input input){
         }
         break;
     
-    case(LEFT):{
+    case(Input::LEFT):{
         _incrementValue(&current_selection,-1);
         break;
     }
-    case(RIGHT):{
+    case(Input::RIGHT):{
         _incrementValue(&current_selection,1);
         break;
     }
 
-    case (SELECT):
+    case (Input::SELECT):
         {
         if (menu_size == 0) break;
         
         switch (current_selection.type)
         {
-        case ConfigType::TYPE_BOOL:{_incrementValue(&current_selection,1); break;}
-        case ConfigType::TYPE_SUBMENU:{
+        case ValueType::TYPE_BOOL:{_incrementValue(&current_selection,1); break;}
+        case ValueType::TYPE_SUBMENU:{
             ConfigMenu* menu =
                 static_cast<ConfigMenu*>(current_selection.pointer.data);
 
             goToMenu(menu, true);
             break;
         }
-        case ConfigType::TYPE_FUNCTION:{current_selection.pointer.function(); ran_function = true; break;}
+        case ValueType::TYPE_FUNCTION:{current_selection.pointer.function(); ran_function = true; break;}
 
         default:{break;}
         }
 
         break;}
     
-    case BACK:
+    case Input::BACK:
         _goBack();
         break;
 

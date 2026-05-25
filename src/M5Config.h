@@ -16,14 +16,7 @@ class M5Config
 {
 public:
 
-    // =========================
-    // FORWARD DECLARATIONS
-    // =========================
     struct ConfigMenu;
-
-    // =========================
-    // TYPES
-    // =========================
     struct ConfigItem;
     using SettingInteracted = void (*)(ConfigItem*);
 
@@ -40,7 +33,18 @@ public:
         const lgfx::v1::IFont* font = &fonts::Font2;
     };
 
-    enum ConfigType {
+    enum class Input {
+        UP,
+        DOWN,
+        LEFT,
+        RIGHT,
+        BACK,
+        SELECT
+    };
+
+    // lower level stuff from now on:
+
+    enum class ValueType {
         TYPE_UINT8_T,
         TYPE_UINT16_T,
         TYPE_UINT32_T,
@@ -52,7 +56,13 @@ public:
         TYPE_FUNCTION
     };
 
-    union Increment {
+    enum class ScrollType {
+        TYPE_CYCLIC,// range 0-100 | 100 + 10 = 10  (modulo)
+        TYPE_WRAP,  // range 0-100 | 100 + 10 = 0   (teleport)
+        TYPE_CLAMP  // range 0-100 | 100 + 10 = 100 (lock)
+    };
+
+    union IncrementType {
         uint8_t u8;
         uint16_t u16;
         uint32_t u32;
@@ -67,18 +77,15 @@ public:
         void (*function)();
     };
 
-    // =========================
-    // CONFIG ITEM
-    // =========================
     struct ConfigItem
     {
         const char* name;
-        ConfigType type;
+        ValueType type;
 
         Pointer pointer;
-        Increment increment;
-        Increment lower_limit;
-        Increment upper_limit;
+        IncrementType increment;
+        IncrementType lower_limit;
+        IncrementType upper_limit;
 
         bool include_max;
 
@@ -90,46 +97,46 @@ public:
             A inc,
             B min,
             C max,
-            bool incl = true
+            bool incl = true // TODO : replace incl for implementation of proper enum of Scroll type
         )
             : name(n),
-              type(TYPE_UINT8_T), // temporary, fixed below
+              type(ValueType::TYPE_UINT8_T), // temporary, fixed below
               include_max(incl)
         {
             pointer.data = ptr;
 
             if constexpr (std::is_same<T, uint8_t>::value) {
-                type = TYPE_UINT8_T;
+                type = ValueType::TYPE_UINT8_T;
                 increment.u8 = inc;
                 lower_limit.u8 = min;
                 upper_limit.u8 = max;
             }
             else if constexpr (std::is_same<T, uint16_t>::value) {
-                type = TYPE_UINT16_T;
+                type = ValueType::TYPE_UINT16_T;
                 increment.u16 = inc;
                 lower_limit.u16 = min;
                 upper_limit.u16 = max;
             }
             else if constexpr (std::is_same<T, uint32_t>::value) {
-                type = TYPE_UINT32_T;
+                type = ValueType::TYPE_UINT32_T;
                 increment.u32 = inc;
                 lower_limit.u32 = min;
                 upper_limit.u32 = max;
             }
             else if constexpr (std::is_same<T, int8_t>::value) {
-                type = TYPE_INT8_T;
+                type = ValueType::TYPE_INT8_T;
                 increment.i8 = inc;
                 lower_limit.i8 = min;
                 upper_limit.i8 = max;
             }
             else if constexpr (std::is_same<T, int16_t>::value) {
-                type = TYPE_INT16_T;
+                type = ValueType::TYPE_INT16_T;
                 increment.i16 = inc;
                 lower_limit.i16 = min;
                 upper_limit.i16 = max;
             }
             else if constexpr (std::is_same<T, int32_t>::value) {
-                type = TYPE_INT32_T;
+                type = ValueType::TYPE_INT32_T;
                 increment.i32 = inc;
                 lower_limit.i32 = min;
                 upper_limit.i32 = max;
@@ -144,7 +151,7 @@ public:
 
         ConfigItem(const char* n, void (*func)())
             : name(n),
-              type(TYPE_FUNCTION),
+              type(ValueType::TYPE_FUNCTION),
               include_max(true)
         {
             pointer.function = func;
@@ -154,7 +161,7 @@ public:
 
         ConfigItem(const char* n, bool* ptr)
             : name(n),
-              type(TYPE_BOOL),
+              type(ValueType::TYPE_BOOL),
               include_max(true)
         {
             pointer.data = ptr;
@@ -166,7 +173,7 @@ public:
         //submenu constructor
         ConfigItem(const char* n, ConfigMenu* submenu)
             : name(n),
-              type(TYPE_SUBMENU),
+              type(ValueType::TYPE_SUBMENU),
               include_max(true)
         {
             pointer.data = submenu;
@@ -180,7 +187,7 @@ public:
 
 
 private:
-
+    // internal engine stuff
     M5Canvas* _canvas;
 
     ExplorerTheme _theme;
@@ -205,16 +212,7 @@ private:
     void _incrementValue(ConfigItem* item, int8_t delta);
     String _formatValue(ConfigItem* item);
 
-public:
-
-    enum Input {
-        UP,
-        DOWN,
-        LEFT,
-        RIGHT,
-        BACK,
-        SELECT
-    };
+    public:
 
     void begin(M5Canvas* targetCanvas, SettingInteracted callback);
     void setTheme(ExplorerTheme* theme = nullptr);
