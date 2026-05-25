@@ -82,9 +82,7 @@ public:
 
         bool include_max;
 
-        // =========================
-        // GENERIC NUMERIC CONSTRUCTOR
-        // =========================
+        // Generic constructor
         template<typename T, typename A, typename B, typename C>
         ConfigItem(
             const char* n,
@@ -135,12 +133,6 @@ public:
                 increment.i32 = inc;
                 lower_limit.i32 = min;
                 upper_limit.i32 = max;
-            }
-            else if constexpr (std::is_same<T, bool>::value) {
-                type = TYPE_BOOL;
-                increment.u8 = inc;
-                lower_limit.u8 = min;
-                upper_limit.u8 = max;
             }
             else {
                 static_assert(!std::is_same<T, T>::value,

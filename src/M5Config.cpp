@@ -59,12 +59,9 @@ void M5Config::_incrementValue(ConfigItem* item, int8_t delta){
             int16_t increment = item->increment.u8 * delta;
             uint8_t min = item->lower_limit.u8;
             uint8_t max = item->upper_limit.u8;
-            
             int16_t temp = *value + increment;
             int16_t range = max - min;
-
             if (range == 0) return; // Prevent division by zero
-
             if (temp > max) {
                 int16_t overshoot = temp - max;
                 // If overshoot is larger than the range, modulo drops it into a single loop
@@ -81,9 +78,9 @@ void M5Config::_incrementValue(ConfigItem* item, int8_t delta){
 
         case ConfigType::TYPE_UINT16_T:{
             uint16_t* value = static_cast<uint16_t*>(item->pointer.data);
-            int32_t increment = item->increment.u8 * delta;
-            uint16_t min = item->lower_limit.u8;
-            uint16_t max = item->upper_limit.u8;
+            int32_t increment = item->increment.u16 * delta;
+            uint16_t min = item->lower_limit.u16;
+            uint16_t max = item->upper_limit.u16;
             int32_t temp = *value + increment;
             int32_t range = max - min;
             if (range == 0) return; 
@@ -101,9 +98,9 @@ void M5Config::_incrementValue(ConfigItem* item, int8_t delta){
 
         case ConfigType::TYPE_UINT32_T:{
             uint32_t* value = static_cast<uint32_t*>(item->pointer.data);
-            int64_t increment = item->increment.u8 * delta;
-            uint32_t min = item->lower_limit.u8;
-            uint32_t max = item->upper_limit.u8;
+            int64_t increment = item->increment.u32 * delta;
+            uint32_t min = item->lower_limit.u32;
+            uint32_t max = item->upper_limit.u32;
             int64_t temp = *value + increment;
             int64_t range = max - min;
             if (range == 0) return; 
@@ -120,9 +117,9 @@ void M5Config::_incrementValue(ConfigItem* item, int8_t delta){
         }
         case ConfigType::TYPE_INT8_T:{
             int8_t* value = static_cast<int8_t*>(item->pointer.data);
-            int16_t increment = item->increment.u8 * delta;
-            int8_t min = item->lower_limit.u8;
-            int8_t max = item->upper_limit.u8;
+            int16_t increment = item->increment.i8 * delta;
+            int8_t min = item->lower_limit.i8;
+            int8_t max = item->upper_limit.i8;
             int16_t temp = *value + increment;
             int16_t range = max - min;
             if (range == 0) return; 
@@ -139,9 +136,9 @@ void M5Config::_incrementValue(ConfigItem* item, int8_t delta){
         }
         case ConfigType::TYPE_INT16_T:{
             int16_t* value = static_cast<int16_t*>(item->pointer.data);
-            int32_t increment = item->increment.u8 * delta;
-            int16_t min = item->lower_limit.u8;
-            int16_t max = item->upper_limit.u8;
+            int32_t increment = item->increment.i16 * delta;
+            int16_t min = item->lower_limit.i16;
+            int16_t max = item->upper_limit.i16;
             int32_t temp = *value + increment;
             int32_t range = max - min;
             if (range == 0) return; 
@@ -158,9 +155,9 @@ void M5Config::_incrementValue(ConfigItem* item, int8_t delta){
         }
         case ConfigType::TYPE_INT32_T:{
             int32_t* value = static_cast<int32_t*>(item->pointer.data);
-            int64_t increment = item->increment.u8 * delta;
-            int32_t min = item->lower_limit.u8;
-            int32_t max = item->upper_limit.u8;
+            int64_t increment = item->increment.i16 * delta;
+            int32_t min = item->lower_limit.i16;
+            int32_t max = item->upper_limit.i16;
             int64_t temp = *value + increment;
             int64_t range = max - min;
             if (range == 0) return; 
