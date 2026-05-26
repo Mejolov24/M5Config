@@ -214,11 +214,11 @@ private:
 
     public:
 
-    void begin(M5Canvas* targetCanvas, SettingInteracted callback);
+    void begin(M5Canvas* targetCanvas, SettingInteracted callback = nullptr);
     void setTheme(ExplorerTheme* theme = nullptr);
     void open();
     void close();
-    void goToMenu(ConfigMenu* menu, bool append = false);
+    void goToMenu(ConfigMenu* menu, bool append = false); // if not append, override menu stack.
     void process_input(Input input);
 };
 

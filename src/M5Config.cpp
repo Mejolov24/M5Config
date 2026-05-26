@@ -155,9 +155,9 @@ void M5Config::_incrementValue(ConfigItem* item, int8_t delta){
         }
         case ValueType::TYPE_INT32_T:{
             int32_t* value = static_cast<int32_t*>(item->pointer.data);
-            int64_t increment = item->increment.i16 * delta;
-            int32_t min = item->lower_limit.i16;
-            int32_t max = item->upper_limit.i16;
+            int64_t increment = item->increment.i32 * delta;
+            int32_t min = item->lower_limit.i32;
+            int32_t max = item->upper_limit.i32;
             int64_t temp = *value + increment;
             int64_t range = max - min;
             if (range == 0) return; 
@@ -177,6 +177,7 @@ void M5Config::_incrementValue(ConfigItem* item, int8_t delta){
 void M5Config::_render(){
     if (_canvas == nullptr) return;
     if (!_active) return;
+    auto old_style = _canvas->getTextStyle();
     _canvas->fillScreen(_theme.background_color);
     uint16_t menu_size = _menuStack[_stack_index]->size;
     uint16_t draw_offset = 0;
@@ -212,6 +213,7 @@ void M5Config::_render(){
 
 
     _canvas->pushSprite(0,0);
+    _canvas->setTextStyle(old_style);
 
     return;
 }
@@ -251,6 +253,7 @@ void M5Config::process_input(Input input){
     uint16_t menu_size = _menuStack[_stack_index]->size;
     ConfigItem current_selection = _menuStack[_stack_index]->config_items[_selection];
     bool ran_function = false;
+    bool interacted = false;
     switch (input)
     {
     case Input::UP:
@@ -288,11 +291,15 @@ void M5Config::process_input(Input input){
         break;
     
     case(Input::LEFT):{
+        if(current_selection.type == ValueType::TYPE_FUNCTION or current_selection.type ==  ValueType::TYPE_SUBMENU) return;
         _incrementValue(&current_selection,-1);
+        interacted = true;
         break;
     }
     case(Input::RIGHT):{
+        if(current_selection.type == ValueType::TYPE_FUNCTION or current_selection.type ==  ValueType::TYPE_SUBMENU) return;
         _incrementValue(&current_selection,1);
+        interacted = true;
         break;
     }
 
@@ -302,16 +309,16 @@ void M5Config::process_input(Input input){
         
         switch (current_selection.type)
         {
-        case ValueType::TYPE_BOOL:{_incrementValue(&current_selection,1); break;}
+        case ValueType::TYPE_BOOL:{_incrementValue(&current_selection,1); interacted = true; break;}
         case ValueType::TYPE_SUBMENU:{
             ConfigMenu* menu =
                 static_cast<ConfigMenu*>(current_selection.pointer.data);
 
             goToMenu(menu, true);
+            interacted = true;
             break;
         }
-        case ValueType::TYPE_FUNCTION:{current_selection.pointer.function(); ran_function = true; break;}
-
+        case ValueType::TYPE_FUNCTION:{ran_function = true; interacted = true; break;}
         default:{break;}
         }
 
@@ -325,7 +332,7 @@ void M5Config::process_input(Input input){
     break;
     }
     _selection = _cursor_offset + _cursor_index;
-    if (not ran_function) _render();
-    if (!_callback) return;
-    _callback(&current_selection);
+    if (ran_function) current_selection.pointer.function();
+    else _render();
+    if (interacted and _callback) _callback(&current_selection);
 }

@@ -120,9 +120,17 @@ M5Config::ConfigMenu menu = {
     .size = sizeof(configs) / sizeof(configs[0])
 };
 
-void OnUsage(M5Config::ConfigItem*){
+void OnUsage(M5Config::ConfigItem* item){/* commented for smoother browsing, not usually needed but it exists.
+    canvas.clear();
+    canvas.drawString("Interacted with item,", 0,0,&fonts::Font4);
+    canvas.drawString("name = " + String(item->name), 0,32,&fonts::Font4);
+    canvas.drawString("Type = " + String(static_cast<int>(item->type)), 0,64,&fonts::Font4);
+    canvas.pushSprite(0,0);
     return;
-}
+    // you cant modify here because its pointless, the prupose of the lib is to modify the value for you.
+    // but if for some reason you wanted to access the value on the callback, then do something similar as _formatValue() inside M5Config.cpp for the casting.
+    */ 
+    }
 
 void setup(){
     auto cfg = M5.config();
