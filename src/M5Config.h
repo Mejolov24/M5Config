@@ -86,7 +86,7 @@ public:
         IncrementType lower_limit;
         IncrementType upper_limit;
 
-        bool include_max;
+        ScrollType scroll_type;
 
         // Generic constructor
         template<typename T, typename A, typename B, typename C>
@@ -96,11 +96,11 @@ public:
             A inc,
             B min,
             C max,
-            bool incl = true // TODO : replace incl for implementation of proper enum of Scroll type
+            ScrollType sct = ScrollType::TYPE_CLAMP
         )
             : name(n),
               type(ValueType::TYPE_UINT8_T), // temporary, fixed below
-              include_max(incl)
+              scroll_type(sct)
         {
             pointer.data = ptr;
 
@@ -150,8 +150,7 @@ public:
 
         ConfigItem(const char* n, void (*func)())
             : name(n),
-              type(ValueType::TYPE_FUNCTION),
-              include_max(true)
+              type(ValueType::TYPE_FUNCTION)
         {
             pointer.function = func;
         }
@@ -160,8 +159,7 @@ public:
 
         ConfigItem(const char* n, bool* ptr)
             : name(n),
-              type(ValueType::TYPE_BOOL),
-              include_max(true)
+              type(ValueType::TYPE_BOOL)
         {
             pointer.data = ptr;
             increment.u8 = 1;
@@ -172,8 +170,7 @@ public:
         //submenu constructor
         ConfigItem(const char* n, ConfigMenu* submenu)
             : name(n),
-              type(ValueType::TYPE_SUBMENU),
-              include_max(true)
+              type(ValueType::TYPE_SUBMENU)
         {
             pointer.data = submenu;
         }

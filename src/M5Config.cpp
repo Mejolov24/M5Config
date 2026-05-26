@@ -61,13 +61,18 @@ void M5Config::_incrementValue(ConfigItem* item, int8_t delta){
             uint8_t max = item->upper_limit.u8;
             int16_t temp = *value + increment;
             int16_t range = max - min;
+            ScrollType scroll_type = item->scroll_type;
             if (range == 0) return; // Prevent division by zero
             if (temp > max) {
+                if (scroll_type == ScrollType::TYPE_CLAMP){*value = max; return;}
+                else if (scroll_type == ScrollType::TYPE_WRAP){*value = min; return;}
                 int16_t overshoot = temp - max;
                 // If overshoot is larger than the range, modulo drops it into a single loop
                 temp = min + (overshoot % range);
             }
             else if (temp < min) {
+                if (scroll_type == ScrollType::TYPE_CLAMP){*value = min; return;}
+                else if (scroll_type == ScrollType::TYPE_WRAP){*value = max; return;}
                 int16_t undershoot = min - temp;
                 temp = max - (undershoot % range);
             }
@@ -83,12 +88,17 @@ void M5Config::_incrementValue(ConfigItem* item, int8_t delta){
             uint16_t max = item->upper_limit.u16;
             int32_t temp = *value + increment;
             int32_t range = max - min;
+            ScrollType scroll_type = item->scroll_type;
             if (range == 0) return; 
             if (temp > max) {
+                if (scroll_type == ScrollType::TYPE_CLAMP){*value = max; return;}
+                else if (scroll_type == ScrollType::TYPE_WRAP){*value = min; return;}
                 int32_t overshoot = temp - max;
                 temp = min + (overshoot % range);
             }
             else if (temp < min) {
+                if (scroll_type == ScrollType::TYPE_CLAMP){*value = min; return;}
+                else if (scroll_type == ScrollType::TYPE_WRAP){*value = max; return;}
                 int32_t undershoot = min - temp;
                 temp = max - (undershoot % range);
             }
@@ -103,12 +113,17 @@ void M5Config::_incrementValue(ConfigItem* item, int8_t delta){
             uint32_t max = item->upper_limit.u32;
             int64_t temp = *value + increment;
             int64_t range = max - min;
+            ScrollType scroll_type = item->scroll_type;
             if (range == 0) return; 
             if (temp > max) {
+                if (scroll_type == ScrollType::TYPE_CLAMP){*value = max; return;}
+                else if (scroll_type == ScrollType::TYPE_WRAP){*value = min; return;}
                 int64_t overshoot = temp - max;
                 temp = min + (overshoot % range);
             }
             else if (temp < min) {
+                if (scroll_type == ScrollType::TYPE_CLAMP){*value = min; return;}
+                else if (scroll_type == ScrollType::TYPE_WRAP){*value = max; return;}
                 int64_t undershoot = min - temp;
                 temp = max - (undershoot % range);
             }
@@ -122,12 +137,17 @@ void M5Config::_incrementValue(ConfigItem* item, int8_t delta){
             int8_t max = item->upper_limit.i8;
             int16_t temp = *value + increment;
             int16_t range = max - min;
+            ScrollType scroll_type = item->scroll_type;
             if (range == 0) return; 
             if (temp > max) {
+                if (scroll_type == ScrollType::TYPE_CLAMP){*value = max; return;}
+                else if (scroll_type == ScrollType::TYPE_WRAP){*value = min; return;}
                 int16_t overshoot = temp - max;
                 temp = min + (overshoot % range);
             }
             else if (temp < min) {
+                if (scroll_type == ScrollType::TYPE_CLAMP){*value = min; return;}
+                else if (scroll_type == ScrollType::TYPE_WRAP){*value = max; return;}
                 int16_t undershoot = min - temp;
                 temp = max - (undershoot % range);
             }
@@ -141,12 +161,17 @@ void M5Config::_incrementValue(ConfigItem* item, int8_t delta){
             int16_t max = item->upper_limit.i16;
             int32_t temp = *value + increment;
             int32_t range = max - min;
+            ScrollType scroll_type = item->scroll_type;
             if (range == 0) return; 
             if (temp > max) {
+                if (scroll_type == ScrollType::TYPE_CLAMP){*value = max; return;}
+                else if (scroll_type == ScrollType::TYPE_WRAP){*value = min; return;}
                 int32_t overshoot = temp - max;
                 temp = min + (overshoot % range);
             }
             else if (temp < min) {
+                if (scroll_type == ScrollType::TYPE_CLAMP){*value = min; return;}
+                else if (scroll_type == ScrollType::TYPE_WRAP){*value = max; return;}
                 int32_t undershoot = min - temp;
                 temp = max - (undershoot % range);
             }
@@ -160,12 +185,17 @@ void M5Config::_incrementValue(ConfigItem* item, int8_t delta){
             int32_t max = item->upper_limit.i32;
             int64_t temp = *value + increment;
             int64_t range = max - min;
+            ScrollType scroll_type = item->scroll_type;
             if (range == 0) return; 
             if (temp > max) {
+                if (scroll_type == ScrollType::TYPE_CLAMP){*value = max; return;}
+                else if (scroll_type == ScrollType::TYPE_WRAP){*value = min; return;}
                 int64_t overshoot = temp - max;
                 temp = min + (overshoot % range);
             }
             else if (temp < min) {
+                if (scroll_type == ScrollType::TYPE_CLAMP){*value = min; return;}
+                else if (scroll_type == ScrollType::TYPE_WRAP){*value = max; return;}
                 int64_t undershoot = min - temp;
                 temp = max - (undershoot % range);
             }

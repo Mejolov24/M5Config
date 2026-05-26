@@ -18,7 +18,9 @@ uint8_t item11_increment = 1;
 uint8_t item11_min = 0;
 uint8_t item11_max = 5;
 
-float item12 = 0.0f;
+uint8_t item12 = 0;
+uint8_t item13 = 0;
+
 
 void item10(){
     canvas.clear();
@@ -38,11 +40,28 @@ M5Config::ConfigItem configs2[] = {
         10 // maximum
     },
     {
-        "0-100, +10", 
+        "0-100, +10, clamp", 
         &item9,
         10,
         0,
         100,
+        M5Config::ScrollType::TYPE_CLAMP
+    },
+        {
+        "0-100, +10, wrap", 
+        &item12,
+        10,
+        0,
+        100,
+        M5Config::ScrollType::TYPE_WRAP
+    },
+        {
+        "0-100, +10, cyclic", 
+        &item13,
+        10,
+        0,
+        100,
+        M5Config::ScrollType::TYPE_CYCLIC
     },
     {
         "function",
