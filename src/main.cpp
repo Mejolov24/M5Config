@@ -1,5 +1,7 @@
 #include <M5Cardputer.h>
 M5Canvas canvas(&M5.Lcd);
+#define MAX_DEPTH 1
+#define DEFAULT_SCROLL 1 // 0 = CLAMP | 1 = WRAP | 2 = CYCLIC
 #include <M5Config.h>
 M5Config config;
 

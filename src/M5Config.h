@@ -2,7 +2,10 @@
 #define M5CONFIG_H
 
 #ifndef MAX_DEPTH
-#define MAX_DEPTH 8
+    #define MAX_DEPTH 8
+#endif
+#ifndef DEFAULT_SCROLL
+    #define DEFAULT_SCROLL 0
 #endif
 
 #include <stdint.h>
@@ -57,9 +60,9 @@ public:
     };
 
     enum class ScrollType {
-        TYPE_CYCLIC,// range 0-100 | 100 + 10 = 10  (modulo)
+        TYPE_CLAMP, // range 0-100 | 100 + 10 = 100 (lock)
         TYPE_WRAP,  // range 0-100 | 100 + 10 = 0   (teleport)
-        TYPE_CLAMP  // range 0-100 | 100 + 10 = 100 (lock)
+        TYPE_CYCLIC // range 0-100 | 100 + 10 = 10  (modulo)
     };
 
     union IncrementType {
@@ -96,7 +99,7 @@ public:
             A inc,
             B min,
             C max,
-            ScrollType sct = ScrollType::TYPE_CLAMP
+            ScrollType sct = ScrollType(DEFAULT_SCROLL)
         )
             : name(n),
               type(ValueType::TYPE_UINT8_T), // temporary, fixed below
