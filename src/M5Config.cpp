@@ -98,7 +98,7 @@ void M5Config::_incrementValue(ConfigItem* item, int8_t delta){
 
         case ValueType::TYPE_UINT32_T:{
             uint32_t* value = static_cast<uint32_t*>(item->pointer.data);
-            int64_t increment = item->increment.u32 * delta;
+            int64_t increment = item->increment.u32 * (int64_t)delta;
             uint32_t min = item->lower_limit.u32;
             uint32_t max = item->upper_limit.u32;
             int64_t temp = *value + increment;
