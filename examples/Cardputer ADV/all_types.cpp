@@ -157,7 +157,6 @@ void setup(){
     auto cfg = M5.config();
     M5Cardputer.begin(cfg);
     canvas.createSprite(240, 135);
-    bool sd_active = false;
 
     // custom theme setup, setting every single theme entry:
     M5Config::ExplorerTheme theme;
