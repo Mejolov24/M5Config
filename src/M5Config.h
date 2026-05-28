@@ -1,10 +1,10 @@
 #ifndef M5CONFIG_H
 #define M5CONFIG_H
 
-#ifndef MAX_DEPTH
+#ifndef MAX_DEPTH // Size of the stack (BIGGER THAN 0)
     #define MAX_DEPTH 8
 #endif
-#ifndef DEFAULT_SCROLL
+#ifndef DEFAULT_SCROLL // default ScrollType
     #define DEFAULT_SCROLL 0
 #endif
 
