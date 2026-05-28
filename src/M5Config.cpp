@@ -30,7 +30,7 @@ String M5Config::_formatValue(ConfigItem* item){
         case ValueType::TYPE_SUBMENU:
         case ValueType::TYPE_FUNCTION:
         return "";
-        case ValueType::TYPE_BOOL:{return String((*static_cast<bool*>(item->pointer.data)) ? "On" : "Off");}
+        case ValueType::TYPE_BOOL:{return String((*static_cast<bool*>(item->pointer.data)) ? _theme.bool_true_string : _theme.bool_false_string);}
         case ValueType::TYPE_UINT8_T:{return String(*static_cast<uint8_t*>(item->pointer.data));}
         case ValueType::TYPE_UINT16_T:{return String(*static_cast<uint16_t*>(item->pointer.data));}
         case ValueType::TYPE_UINT32_T:{return String(*static_cast<uint32_t*>(item->pointer.data));}
@@ -40,7 +40,7 @@ String M5Config::_formatValue(ConfigItem* item){
     }
     return "";
 }
-
+// monolithic ahh caster with wrapping
 void M5Config::_incrementValue(ConfigItem* item, int8_t delta){
     if(item->pointer.data == nullptr) return;
     
@@ -204,6 +204,7 @@ void M5Config::_incrementValue(ConfigItem* item, int8_t delta){
         }
         }
     }
+
 void M5Config::_render(){
     if (_canvas == nullptr) return;
     if (!_active) return;
@@ -258,7 +259,7 @@ void M5Config::begin(M5Canvas* targetCanvas, SettingInteracted callback){
 }
 
 void M5Config::open(){
-
+    if (_menuStack[0] == nullptr) return;
     _active = true;
     _render();
 

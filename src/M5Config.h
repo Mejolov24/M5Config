@@ -28,11 +28,13 @@ public:
         uint16_t border_color = WHITE;
         uint16_t selection_color = BLUE;
         uint16_t text_color = WHITE;
-        uint16_t value_color = YELLOW;
-        uint16_t bool_true_color = GREEN;
-        uint16_t bool_false_color = RED;
+        uint16_t value_color = WHITE;
         uint16_t item_height = 16;
         uint16_t item_window = 6;
+        uint16_t bool_true_color = GREEN;
+        uint16_t bool_false_color = RED;
+        String bool_true_string = "On";
+        String bool_false_string = "Off";
         const lgfx::v1::IFont* font = &fonts::Font2;
     };
 
