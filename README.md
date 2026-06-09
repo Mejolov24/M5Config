@@ -182,7 +182,7 @@ M5Config::ConfigMenu menu = {
     .size = sizeof(configs) / sizeof(configs[0])
 };
 
-goToMenu(menu);
+config.goToMenu(&menu);
 ```
 
 ### begin()
@@ -221,7 +221,10 @@ activates and renders the menu canvas at stack head activating all inputs
 ### close()
 closes and clears the canvas screen desactivating all inputs
 
-### process_input();
+### get_current_menu()
+returns pointer of currently navigated menu
+
+### process_input()
 handles inputs.
 ```cpp
 enum class Input {

@@ -182,6 +182,7 @@ public:
     };
 
     struct ConfigMenu {
+        String name;
         ConfigItem* config_items;
         uint16_t size;
     };
@@ -221,6 +222,7 @@ private:
     void close();
     void goToMenu(ConfigMenu* menu, bool append = false); // if not append, override menu stack.
     void process_input(Input input);
+    ConfigMenu* get_current_menu();
 };
 
 #endif
