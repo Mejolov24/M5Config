@@ -182,7 +182,7 @@ public:
     };
 
     struct ConfigMenu {
-        String name;
+        uint8_t id;
         ConfigItem* config_items;
         uint16_t size;
     };
