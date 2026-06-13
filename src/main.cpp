@@ -143,7 +143,7 @@ M5Config::ConfigMenu menu = {
     .size = sizeof(configs) / sizeof(configs[0])
 };
 
-void OnUsage(M5Config::ConfigItem* item){/* commented for smoother browsing, not usually needed but it exists.
+void OnUsage(M5Config::ConfigItem* item, M5Config::ConfigMenu* menu){/* commented for smoother browsing, not usually needed but it exists.
     canvas.clear();
     canvas.drawString("Interacted with item,", 0,0,&fonts::Font4);
     canvas.drawString("name = " + String(item->name), 0,32,&fonts::Font4);

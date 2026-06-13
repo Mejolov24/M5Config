@@ -21,7 +21,7 @@ public:
 
     struct ConfigMenu;
     struct ConfigItem;
-    using SettingInteracted = void (*)(ConfigItem*);
+    using SettingInteracted = void (*)(ConfigItem*,ConfigMenu*);
 
     struct ExplorerTheme {
         uint16_t background_color = BLACK;

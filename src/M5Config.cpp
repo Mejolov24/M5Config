@@ -365,7 +365,7 @@ void M5Config::process_input(Input input){
     _selection = _cursor_offset + _cursor_index;
     if (ran_function) current_selection.pointer.function();
     else _render();
-    if (interacted and _callback) _callback(&current_selection);
+    if (interacted and _callback) _callback(&current_selection,_menuStack[_stack_index]);
 }
 
 M5Config::ConfigMenu* M5Config::get_current_menu(){
