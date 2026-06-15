@@ -214,11 +214,9 @@ void M5Config::render(){
     uint16_t draw_offset = 0;
     uint16_t selection_cursor = _cursor_offset + _cursor_index;
     uint8_t window_offset = _cursor_offset + _theme.item_window; // until where we are seeing in the vector
-    if (menu_size < window_offset){
-        window_offset = menu_size;
-        if (menu_size != 0) window_offset --;}
+    if (menu_size < window_offset){window_offset = menu_size;}
     
-    for (uint16_t i = _cursor_offset; i <= window_offset; i++){
+    for (uint16_t i = _cursor_offset; i < window_offset; i++){
         if (menu_size == 0) break;
         ConfigItem* item = &_menuStack[_stack_index]->config_items[i];
         String current_item_name = item->name;
