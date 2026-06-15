@@ -18,7 +18,7 @@ void M5Config::goToMenu(ConfigMenu* menu, bool append){
     }
     _cursor_offset = 0;
     _cursor_index = 0;
-    _render();
+    render();
     return;
 }
 
@@ -205,7 +205,7 @@ void M5Config::_incrementValue(ConfigItem* item, int8_t delta){
         }
     }
 
-void M5Config::_render(){
+void M5Config::render(){
     if (_canvas == nullptr) return;
     if (!_active) return;
     auto old_style = _canvas->getTextStyle();
@@ -261,7 +261,7 @@ void M5Config::begin(M5Canvas* targetCanvas, SettingInteracted callback){
 void M5Config::open(){
     if (_menuStack[0] == nullptr) return;
     _active = true;
-    _render();
+    render();
 
     return;
 }
@@ -364,7 +364,7 @@ void M5Config::process_input(Input input){
     }
     _selection = _cursor_offset + _cursor_index;
     if (ran_function) current_selection.pointer.function();
-    else _render();
+    else render();
     if (interacted and _callback) _callback(&current_selection,_menuStack[_stack_index]);
 }
 

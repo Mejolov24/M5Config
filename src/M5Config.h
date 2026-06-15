@@ -210,7 +210,6 @@ private:
     bool _active = false;
 
     void _goBack();
-    void _render();
     void _incrementValue(ConfigItem* item, int8_t delta);
     String _formatValue(ConfigItem* item);
 
@@ -220,6 +219,7 @@ private:
     void setTheme(ExplorerTheme* theme = nullptr);
     void open();
     void close();
+    void render();
     void goToMenu(ConfigMenu* menu, bool append = false); // if not append, override menu stack.
     void process_input(Input input);
     ConfigMenu* get_current_menu();
