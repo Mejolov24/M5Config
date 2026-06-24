@@ -213,7 +213,7 @@ void M5Config::render(){
     uint16_t menu_size = _menuStack[_stack_index]->size;
     uint16_t draw_offset = 0;
     uint16_t selection_cursor = _cursor_offset + _cursor_index;
-    uint8_t window_offset = _cursor_offset + _theme.item_window; // until where we are seeing in the vector
+    uint8_t window_offset = _cursor_offset + _theme.item_window + 1; // until where we are seeing in the vector
     if (menu_size < window_offset){window_offset = menu_size;}
     
     for (uint16_t i = _cursor_offset; i < window_offset; i++){
